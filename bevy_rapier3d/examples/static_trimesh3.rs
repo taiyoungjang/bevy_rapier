@@ -1,4 +1,4 @@
-use std::f32::consts::TAU;
+use std::f64::consts::TAU;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -23,28 +23,28 @@ fn main() {
 fn setup_graphics(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(-15.0, 8.0, 15.0)
-            .looking_at(Vec3::new(-5.0, 0.0, 5.0), Vec3::Y),
+            .looking_at(DVec3::new(-5.0, 0.0, 5.0), DVec3::Y),
         ..Default::default()
     });
 }
 
-fn ramp_size() -> Vec3 {
-    Vec3::new(10.0, 1.0, 1.0)
+fn ramp_size() -> DVec3 {
+    DVec3::new(10.0, 1.0, 1.0)
 }
 
 pub fn setup_physics(mut commands: Commands) {
     // Create the ramp.
-    let mut vertices: Vec<Vec3> = Vec::new();
+    let mut vertices: Vec<DVec3> = Vec::new();
     let mut indices: Vec<[u32; 3]> = Vec::new();
     let segments = 32;
     let ramp_size = ramp_size();
 
     for i in 0..=segments {
         // Half cosine wave vertically (with middle of low point at origin)
-        let x = i as f32 / segments as f32 * ramp_size.x;
-        let y = (-(i as f32 / segments as f32 * TAU / 2.0).cos() + 1.0) * ramp_size.y / 2.0;
-        vertices.push(Vec3::new(x, y, -ramp_size.z / 2.0));
-        vertices.push(Vec3::new(x, y, ramp_size.z / 2.0));
+        let x = i as f64 / segments as f64 * ramp_size.x;
+        let y = (-(i as f64 / segments as f64 * TAU / 2.0).cos() + 1.0) * ramp_size.y / 2.0;
+        vertices.push(DVec3::new(x, y, -ramp_size.z / 2.0));
+        vertices.push(DVec3::new(x, y, ramp_size.z / 2.0));
     }
     for i in 0..segments {
         // Two triangles making up a flat quad for each segment of the ramp.
@@ -57,23 +57,23 @@ pub fn setup_physics(mut commands: Commands) {
     // Create a bowl with a cosine cross-section,
     // so that we can join the end of the ramp smoothly
     // to the lip of the bowl.
-    let mut vertices: Vec<Vec3> = Vec::new();
+    let mut vertices: Vec<DVec3> = Vec::new();
     let mut indices: Vec<[u32; 3]> = Vec::new();
 
     let segments = 32;
-    let bowl_size = Vec3::new(10.0, 3.0, 10.0);
+    let bowl_size = DVec3::new(10.0, 3.0, 10.0);
 
     for ix in 0..=segments {
         for iz in 0..=segments {
             // Map x and y into range [-1.0, 1.0];
-            let shifted_z = (iz as f32 / segments as f32 - 0.5) * 2.0;
-            let shifted_x = (ix as f32 / segments as f32 - 0.5) * 2.0;
+            let shifted_z = (iz as f64 / segments as f64 - 0.5) * 2.0;
+            let shifted_x = (ix as f64 / segments as f64 - 0.5) * 2.0;
             // Clamp radius at 1.0 or lower so the bowl has a flat lip near the corners.
             let clamped_radius = (shifted_z.powi(2) + shifted_x.powi(2)).sqrt().min(1.0);
             let x = shifted_x * bowl_size.x / 2.0;
             let z = shifted_z * bowl_size.z / 2.0;
             let y = ((clamped_radius - 0.5) * TAU / 2.0).sin() * bowl_size.y / 2.0;
-            vertices.push(Vec3::new(x, y, z));
+            vertices.push(DVec3::new(x, y, z));
         }
     }
     for ix in 0..segments {
@@ -100,8 +100,8 @@ pub fn setup_physics(mut commands: Commands) {
 
 #[derive(Resource)]
 struct BallState {
-    seconds_until_next_spawn: f32,
-    seconds_between_spawns: f32,
+    seconds_until_next_spawn: f64,
+    seconds_between_spawns: f64,
     balls_spawned: usize,
     max_balls: usize,
 }

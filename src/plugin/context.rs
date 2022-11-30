@@ -220,7 +220,7 @@ impl RapierContext {
                 time_scale,
                 substeps,
             } => {
-                sim_to_render_time.diff += time.delta_seconds();
+                sim_to_render_time.diff += time.delta_seconds_f64();
 
                 while sim_to_render_time.diff > 0.0 {
                     // NOTE: in this comparison we do the same computations we
@@ -269,7 +269,7 @@ impl RapierContext {
             } => {
                 let mut substep_integration_parameters = self.integration_parameters;
                 substep_integration_parameters.dt =
-                    (time.delta_seconds() * time_scale).min(max_dt) / (substeps as Real);
+                    (time.delta_seconds_f64() * time_scale).min(max_dt) / (substeps as Real);
 
                 for _ in 0..substeps {
                     self.pipeline.step(

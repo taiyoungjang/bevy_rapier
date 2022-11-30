@@ -521,7 +521,7 @@ pub fn writeback_rigid_bodies(
                             // new_transform = curr_parent_global_transform.inverse() * interpolated_pos
                             let (_, inverse_parent_rotation, inverse_parent_translation) =
                                 parent_global_transform
-                                    .affine()
+                                    .daffine()
                                     .inverse()
                                     .to_scale_rotation_translation();
                             let new_rotation = inverse_parent_rotation * interpolated_pos.rotation;
@@ -1366,7 +1366,7 @@ mod tests {
         time::TimePlugin,
         window::WindowPlugin,
     };
-    use std::f32::consts::PI;
+    use std::f64::consts::PI;
 
     use super::*;
     use crate::plugin::{NoUserData, RapierPhysicsPlugin};
@@ -1546,13 +1546,13 @@ mod tests {
 
         let different = (
             Transform {
-                translation: Vec3::X * 10.0,
-                rotation: Quat::from_rotation_x(PI),
+                translation: DVec3::X * 10.0,
+                rotation: DQuat::from_rotation_x(PI),
                 ..Default::default()
             },
             Transform {
-                translation: Vec3::Y * 10.0,
-                rotation: Quat::from_rotation_x(PI),
+                translation: DVec3::Y * 10.0,
+                rotation: DQuat::from_rotation_x(PI),
                 ..Default::default()
             },
         );
@@ -1601,16 +1601,16 @@ mod tests {
 
         let different = (
             Transform {
-                translation: Vec3::X * 10.0,
+                translation: DVec3::X * 10.0,
                 // NOTE: in 2D the test will fail if the rotation is wrt. an axis
                 //       other than Z because 2D physics objects can’t rotate wrt.
                 //       other axes.
-                rotation: Quat::from_rotation_z(PI),
+                rotation: DQuat::from_rotation_z(PI),
                 ..Default::default()
             },
             Transform {
-                translation: Vec3::Y * 10.0,
-                rotation: Quat::from_rotation_z(PI),
+                translation: DVec3::Y * 10.0,
+                rotation: DQuat::from_rotation_z(PI),
                 ..Default::default()
             },
         );

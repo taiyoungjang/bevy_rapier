@@ -50,7 +50,7 @@ pub fn setup_physics(mut commands: Commands) {
      */
     commands.spawn((
         TransformBundle::from(
-            Transform::from_xyz(50.0, 500.0, 0.0).with_rotation(Quat::from_rotation_z(1.0)),
+            Transform::from_xyz(50.0, 500.0, 0.0).with_rotation(DQuat::from_rotation_z(1.0)),
         ),
         RigidBody::Dynamic,
         LockedAxes::ROTATION_LOCKED,

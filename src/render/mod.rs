@@ -111,7 +111,7 @@ impl Plugin for RapierDebugRenderPlugin {
 }
 
 struct BevyLinesRenderBackend<'world, 'state, 'a, 'b, 'c> {
-    physics_scale: f32,
+    physics_scale: f64,
     custom_colors: Query<'world, 'state, &'a ColliderDebugColor>,
     context: &'b RapierContext,
     lines: &'c mut DebugLines,
@@ -147,8 +147,8 @@ impl<'world, 'state, 'a, 'b, 'c> DebugRenderBackend
         let scale = self.physics_scale;
         let color = self.object_color(object, color);
         self.lines.line_colored(
-            [a.x * scale, a.y * scale, 0.0].into(),
-            [b.x * scale, b.y * scale, 0.0].into(),
+            [a.x * scale, a.y * scale, 0.0].map(|x|x as f32).into(),
+            [b.x * scale, b.y * scale, 0.0].map(|x|x as f32).into(),
             0.0,
             Color::hsla(color[0], color[1], color[2], color[3]),
         )
@@ -165,8 +165,8 @@ impl<'world, 'state, 'a, 'b, 'c> DebugRenderBackend
         let scale = self.physics_scale;
         let color = self.object_color(object, color);
         self.lines.line_colored(
-            [a.x * scale, a.y * scale, a.z * scale].into(),
-            [b.x * scale, b.y * scale, b.z * scale].into(),
+            [a.x * scale, a.y * scale, a.z * scale].map(|x|x as f32).into(),
+            [b.x * scale, b.y * scale, b.z * scale].map(|x|x as f32).into(),
             0.0,
             Color::hsla(color[0], color[1], color[2], color[3]),
         )

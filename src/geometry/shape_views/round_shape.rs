@@ -26,7 +26,7 @@ macro_rules!  round_shape_view(
 
         impl<'a> $RoundShapeView<'a> {
             /// The radius of the round border of this shape.
-            pub fn border_radius(&self) -> f32 {
+            pub fn border_radius(&self) -> f64 {
                 self.raw.border_radius
             }
 
@@ -46,12 +46,12 @@ macro_rules!  round_shape_view(
 
         impl<'a> $RoundShapeViewMut<'a> {
             /// The radius of the round border of this shape.
-            pub fn border_radius(&self) -> f32 {
+            pub fn border_radius(&self) -> f64 {
                 self.raw.border_radius
             }
 
             /// Set the radius of the round border of this shape.
-            pub fn set_border_radius(&mut self, new_border_radius: f32) {
+            pub fn set_border_radius(&mut self, new_border_radius: f64) {
                 self.raw.border_radius = new_border_radius;
             }
 

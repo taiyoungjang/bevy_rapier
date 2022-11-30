@@ -19,7 +19,7 @@ fn main() {
 fn setup_graphics(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(-30.0, 30.0, 100.0)
-            .looking_at(Vec3::new(0.0, 10.0, 0.0), Vec3::Y),
+            .looking_at(DVec3::new(0.0, 10.0, 0.0), DVec3::Y),
         ..Default::default()
     });
 }
@@ -43,11 +43,11 @@ pub fn setup_physics(mut commands: Commands) {
     let rad = 0.2;
 
     let shift = rad * 4.0 + rad;
-    let centerx = shift * (num / 2) as f32;
+    let centerx = shift * (num / 2) as f64;
     let centery = shift / 2.0;
-    let centerz = shift * (num / 2) as f32;
+    let centerz = shift * (num / 2) as f64;
 
-    let mut offset = -(num as f32) * (rad * 2.0 + rad) * 0.5;
+    let mut offset = -(num as f64) * (rad * 2.0 + rad) * 0.5;
     let mut color = 0;
     let colors = [
         Color::hsl(220.0, 1.0, 0.3),
@@ -58,9 +58,9 @@ pub fn setup_physics(mut commands: Commands) {
     for j in 0usize..20 {
         for i in 0..num {
             for k in 0usize..num {
-                let x = i as f32 * shift * 5.0 - centerx + offset;
-                let y = j as f32 * (shift * 5.0) + centery + 3.0;
-                let z = k as f32 * shift * 2.0 - centerz + offset;
+                let x = i as f64 * shift * 5.0 - centerx + offset;
+                let y = j as f64 * (shift * 5.0) + centery + 3.0;
+                let z = k as f64 * shift * 2.0 - centerz + offset;
                 color += 1;
 
                 // Crate a rigid-body with multiple colliders attached, using Bevy hierarchy.
@@ -92,6 +92,6 @@ pub fn setup_physics(mut commands: Commands) {
             }
         }
 
-        offset -= 0.05 * rad * (num as f32 - 1.0);
+        offset -= 0.05 * rad * (num as f64 - 1.0);
     }
 }

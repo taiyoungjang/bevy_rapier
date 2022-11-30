@@ -53,11 +53,11 @@ struct Game {
 }
 
 impl Game {
-    fn floor_y(&self) -> f32 {
-        -(self.n_rows as f32) * 0.5
+    fn floor_y(&self) -> f64 {
+        -(self.n_rows as f64) * 0.5
     }
-    fn left_wall_x(&self) -> f32 {
-        -(self.n_lanes as f32) * 0.5
+    fn left_wall_x(&self) -> f64 {
+        -(self.n_lanes as f64) * 0.5
     }
 }
 
@@ -137,7 +137,7 @@ fn setup_board(commands: &mut Commands, game: &Game) {
             ..Default::default()
         },
         RigidBody::Fixed,
-        Collider::cuboid(game.n_lanes as f32 * 30.0 / 2.0, 60.0 / 2.0),
+        Collider::cuboid(game.n_lanes as f64 * 30.0 / 2.0, 60.0 / 2.0),
     ));
 }
 
@@ -156,11 +156,11 @@ fn spawn_cube(commands: &mut Commands, game: &mut Game) {
 
     game.current_cube_joints.clear();
     for (i, j) in &joints {
-        let x_dir = coords[*j].0 as f32 - coords[*i].0 as f32;
-        let y_dir = coords[*j].1 as f32 - coords[*i].1 as f32;
+        let x_dir = coords[*j].0 as f64 - coords[*i].0 as f64;
+        let y_dir = coords[*j].1 as f64 - coords[*i].1 as f64;
 
-        let anchor_1 = Vec2::new(x_dir * 0.5, y_dir * 0.5);
-        let anchor_2 = Vec2::new(x_dir * -0.5, y_dir * -0.5);
+        let anchor_1 = DVec2::new(x_dir * 0.5, y_dir * 0.5);
+        let anchor_2 = DVec2::new(x_dir * -0.5, y_dir * -0.5);
 
         commands
             .entity(block_entities[*j])
@@ -189,8 +189,8 @@ fn spawn_block(
     row: i32,
 ) -> Entity {
     // x, y is the center of the block
-    let x = game.left_wall_x() + lane as f32 + 0.5;
-    let y = game.floor_y() + row as f32 + 0.5;
+    let x = game.left_wall_x() + lane as f64 + 0.5;
+    let y = game.floor_y() + row as f64 + 0.5;
 
     // Game gets more difficult when this is lower:
     let linear_damping = 3.0;

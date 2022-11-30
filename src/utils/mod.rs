@@ -8,7 +8,7 @@ use rapier::math::{Isometry, Real};
 pub fn iso_to_transform(iso: &Isometry<Real>, physics_scale: Real) -> Transform {
     Transform {
         translation: (iso.translation.vector.push(0.0) * physics_scale).into(),
-        rotation: bevy::prelude::Quat::from_rotation_z(iso.rotation.angle()),
+        rotation: bevy::prelude::DQuat::from_rotation_z(iso.rotation.angle()),
         ..Default::default()
     }
 }
@@ -57,8 +57,8 @@ mod tests {
     #[test]
     fn convert_back_to_equal_transform() {
         let transform = Transform {
-            translation: bevy::prelude::Vec3::new(-2.1855694e-8, 0.0, 0.0),
-            rotation: bevy::prelude::Quat::from_xyzw(0.99999994, 0.0, 1.6292068e-7, 0.0)
+            translation: bevy::prelude::DVec3::new(-2.1855694e-8, 0.0, 0.0),
+            rotation: bevy::prelude::DQuat::from_xyzw(0.99999994, 0.0, 1.6292068e-7, 0.0)
                 .normalize(),
             ..Default::default()
         };

@@ -14,7 +14,7 @@ pub type NoUserData = ();
 // This will automatically setup all the resources needed to run a physics simulation with the
 // Rapier physics engine.
 pub struct RapierPhysicsPlugin<PhysicsHooksData = ()> {
-    physics_scale: f32,
+    physics_scale: f64,
     default_system_setup: bool,
     _phantom: PhantomData<PhysicsHooksData>,
 }
@@ -26,7 +26,7 @@ impl<PhysicsHooksData: 'static + WorldQuery + Send + Sync> RapierPhysicsPlugin<P
     /// all the length-related quantities by the `physics_scale` factor. This should
     /// likely always be 1.0 in 3D. In 2D, this is useful to specify a "pixels-per-meter"
     /// conversion ratio.
-    pub fn with_physics_scale(mut self, physics_scale: f32) -> Self {
+    pub fn with_physics_scale(mut self, physics_scale: f64) -> Self {
         self.physics_scale = physics_scale;
         self
     }
@@ -44,7 +44,7 @@ impl<PhysicsHooksData: 'static + WorldQuery + Send + Sync> RapierPhysicsPlugin<P
     ///
     /// This conversion unit assumes that the 2D camera uses an unscaled projection.
     #[cfg(feature = "dim2")]
-    pub fn pixels_per_meter(pixels_per_meter: f32) -> Self {
+    pub fn pixels_per_meter(pixels_per_meter: f64) -> Self {
         Self {
             physics_scale: pixels_per_meter,
             default_system_setup: true,
@@ -61,12 +61,12 @@ impl<PhysicsHooksData: 'static + WorldQuery + Send + Sync> RapierPhysicsPlugin<P
                 let systems = SystemSet::new()
                     .with_system(systems::update_character_controls) // Run the character controller befor ethe manual transform propagation.
                     .with_system(
-                        bevy::transform::transform_propagate_system
+                        bevy_transform::systems::propagate_transforms
                             .after(systems::update_character_controls),
                     ) // Run Bevy transform propagation additionally to sync [`GlobalTransform`]
                     .with_system(
                         systems::init_async_colliders
-                            .after(bevy::transform::transform_propagate_system),
+                            .after(bevy_transform::systems::propagate_transforms),
                     )
                     .with_system(systems::apply_scale.after(systems::init_async_colliders))
                     .with_system(systems::apply_collider_user_changes.after(systems::apply_scale))

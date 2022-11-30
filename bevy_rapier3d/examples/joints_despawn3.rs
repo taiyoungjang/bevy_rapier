@@ -26,7 +26,7 @@ fn main() {
 fn setup_graphics(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(15.0, 5.0, 42.0)
-            .looking_at(Vec3::new(13.0, 1.0, 1.0), Vec3::Y),
+            .looking_at(DVec3::new(13.0, 1.0, 1.0), DVec3::Y),
         ..Default::default()
     });
 }
@@ -49,16 +49,16 @@ fn create_prismatic_joints(
         .id();
 
     for i in 0..num {
-        let dz = (i + 1) as f32 * shift;
+        let dz = (i + 1) as f64 * shift;
 
         let axis = if i % 2 == 0 {
-            Vec3::new(1.0, 1.0, 0.0)
+            DVec3::new(1.0, 1.0, 0.0)
         } else {
-            Vec3::new(-1.0, 1.0, 0.0)
+            DVec3::new(-1.0, 1.0, 0.0)
         };
 
         let prism = PrismaticJointBuilder::new(axis)
-            .local_anchor2(Vec3::new(0.0, 0.0, -shift))
+            .local_anchor2(DVec3::new(0.0, 0.0, -shift))
             .limits([-2.0, 2.0]);
         let joint = ImpulseJoint::new(curr_parent, prism);
 
@@ -79,7 +79,7 @@ fn create_prismatic_joints(
 
 fn create_revolute_joints(
     commands: &mut Commands,
-    origin: Vec3,
+    origin: DVec3,
     num: usize,
     despawn: &mut DespawnResource,
 ) {
@@ -96,12 +96,12 @@ fn create_revolute_joints(
 
     for i in 0..num {
         // Create four bodies.
-        let z = origin.z + i as f32 * shift * 2.0 + shift;
+        let z = origin.z + i as f64 * shift * 2.0 + shift;
         let positions = [
-            Vec3::new(origin.x, origin.y, z),
-            Vec3::new(origin.x + shift, origin.y, z),
-            Vec3::new(origin.x + shift, origin.y, z + shift),
-            Vec3::new(origin.x, origin.y, z + shift),
+            DVec3::new(origin.x, origin.y, z),
+            DVec3::new(origin.x + shift, origin.y, z),
+            DVec3::new(origin.x + shift, origin.y, z + shift),
+            DVec3::new(origin.x, origin.y, z + shift),
         ];
 
         let mut handles = [curr_parent; 4];
@@ -116,14 +116,14 @@ fn create_revolute_joints(
         }
 
         // Setup four joints.
-        let x = Vec3::X;
-        let z = Vec3::Z;
+        let x = DVec3::X;
+        let z = DVec3::Z;
 
         let revs = [
-            RevoluteJointBuilder::new(z).local_anchor2(Vec3::new(0.0, 0.0, -shift)),
-            RevoluteJointBuilder::new(x).local_anchor2(Vec3::new(-shift, 0.0, 0.0)),
-            RevoluteJointBuilder::new(z).local_anchor2(Vec3::new(0.0, 0.0, -shift)),
-            RevoluteJointBuilder::new(x).local_anchor2(Vec3::new(shift, 0.0, 0.0)),
+            RevoluteJointBuilder::new(z).local_anchor2(DVec3::new(0.0, 0.0, -shift)),
+            RevoluteJointBuilder::new(x).local_anchor2(DVec3::new(-shift, 0.0, 0.0)),
+            RevoluteJointBuilder::new(z).local_anchor2(DVec3::new(0.0, 0.0, -shift)),
+            RevoluteJointBuilder::new(x).local_anchor2(DVec3::new(shift, 0.0, 0.0)),
         ];
 
         commands
@@ -152,7 +152,7 @@ fn create_revolute_joints(
 
 fn create_fixed_joints(
     commands: &mut Commands,
-    origin: Vec3,
+    origin: DVec3,
     num: usize,
     despawn: &mut ResMut<DespawnResource>,
 ) {
@@ -163,8 +163,8 @@ fn create_fixed_joints(
 
     for k in 0..num {
         for i in 0..num {
-            let fk = k as f32;
-            let fi = i as f32;
+            let fk = k as f64;
+            let fi = i as f64;
 
             // NOTE: the num - 2 test is to avoid two consecutive
             // fixed bodies. Because physx will crash if we add
@@ -190,7 +190,7 @@ fn create_fixed_joints(
             // Vertical joint.
             if i > 0 {
                 let parent_entity = *body_entities.last().unwrap();
-                let joint = FixedJointBuilder::new().local_anchor2(Vec3::new(0.0, 0.0, -shift));
+                let joint = FixedJointBuilder::new().local_anchor2(DVec3::new(0.0, 0.0, -shift));
                 commands.entity(child_entity).with_children(|children| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise
@@ -203,7 +203,7 @@ fn create_fixed_joints(
             if k > 0 {
                 let parent_index = body_entities.len() - num;
                 let parent_entity = body_entities[parent_index];
-                let joint = FixedJointBuilder::new().local_anchor2(Vec3::new(-shift, 0.0, 0.0));
+                let joint = FixedJointBuilder::new().local_anchor2(DVec3::new(-shift, 0.0, 0.0));
                 commands.entity(child_entity).with_children(|children| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise
@@ -226,8 +226,8 @@ fn create_ball_joints(commands: &mut Commands, num: usize, despawn: &mut Despawn
 
     for k in 0..num {
         for i in 0..num {
-            let fk = k as f32;
-            let fi = i as f32;
+            let fk = k as f64;
+            let fi = i as f64;
 
             let rigid_body = if i == 0 && (k % 4 == 0 || k == num - 1) {
                 RigidBody::Fixed
@@ -246,7 +246,7 @@ fn create_ball_joints(commands: &mut Commands, num: usize, despawn: &mut Despawn
             // Vertical joint.
             if i > 0 {
                 let parent_entity = *body_entities.last().unwrap();
-                let joint = SphericalJointBuilder::new().local_anchor2(Vec3::new(0.0, 0.0, -shift));
+                let joint = SphericalJointBuilder::new().local_anchor2(DVec3::new(0.0, 0.0, -shift));
                 commands.entity(child_entity).with_children(|children| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise
@@ -262,7 +262,7 @@ fn create_ball_joints(commands: &mut Commands, num: usize, despawn: &mut Despawn
             if k > 0 {
                 let parent_index = body_entities.len() - num;
                 let parent_entity = body_entities[parent_index];
-                let joint = SphericalJointBuilder::new().local_anchor2(Vec3::new(-shift, 0.0, 0.0));
+                let joint = SphericalJointBuilder::new().local_anchor2(DVec3::new(-shift, 0.0, 0.0));
                 commands.entity(child_entity).with_children(|children| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise
@@ -277,9 +277,9 @@ fn create_ball_joints(commands: &mut Commands, num: usize, despawn: &mut Despawn
 }
 
 pub fn setup_physics(mut commands: Commands, mut despawn: ResMut<DespawnResource>) {
-    create_prismatic_joints(&mut commands, Vec3::new(20.0, 10.0, 0.0), 5, &mut despawn);
-    create_revolute_joints(&mut commands, Vec3::new(20.0, 0.0, 0.0), 3, &mut despawn);
-    create_fixed_joints(&mut commands, Vec3::new(0.0, 10.0, 0.0), 5, &mut despawn);
+    create_prismatic_joints(&mut commands, DVec3::new(20.0, 10.0, 0.0), 5, &mut despawn);
+    create_revolute_joints(&mut commands, DVec3::new(20.0, 0.0, 0.0), 3, &mut despawn);
+    create_fixed_joints(&mut commands, DVec3::new(0.0, 10.0, 0.0), 5, &mut despawn);
     create_ball_joints(&mut commands, 15, &mut despawn);
 }
 

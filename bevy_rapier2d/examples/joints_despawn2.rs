@@ -41,8 +41,8 @@ pub fn setup_physics(mut commands: Commands, mut despawn: ResMut<DespawnResource
 
     for k in 0..numk {
         for i in 0..numi {
-            let fk = k as f32;
-            let fi = i as f32;
+            let fk = k as f64;
+            let fi = i as f64;
 
             let rigid_body = if i == 0 && (k % 4 == 0 || k == numk - 1) {
                 RigidBody::Fixed
@@ -61,7 +61,7 @@ pub fn setup_physics(mut commands: Commands, mut despawn: ResMut<DespawnResource
             // Vertical joint.
             if i > 0 {
                 let parent_entity = *body_entities.last().unwrap();
-                let joint = RevoluteJointBuilder::new().local_anchor2(Vec2::new(0.0, shift));
+                let joint = RevoluteJointBuilder::new().local_anchor2(DVec2::new(0.0, shift));
                 commands.entity(child_entity).with_children(|cmd| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise
@@ -77,7 +77,7 @@ pub fn setup_physics(mut commands: Commands, mut despawn: ResMut<DespawnResource
             if k > 0 {
                 let parent_index = body_entities.len() - numi;
                 let parent_entity = body_entities[parent_index];
-                let joint = RevoluteJointBuilder::new().local_anchor2(Vec2::new(-shift, 0.0));
+                let joint = RevoluteJointBuilder::new().local_anchor2(DVec2::new(-shift, 0.0));
                 commands.entity(child_entity).with_children(|cmd| {
                     // NOTE: we want to attach multiple impulse joints to this entity, so
                     //       we need to add the components to children of the entity. Otherwise

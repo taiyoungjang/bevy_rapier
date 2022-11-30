@@ -22,9 +22,9 @@ pub mod r3d {
             view::{ExtractedView, Msaa, ViewTarget},
         },
     };
+    use bevy::render::render_resource::ShaderDefVal;
 
     use super::super::{DebugLinesConfig, RenderDebugLinesMesh, DEBUG_LINES_SHADER_HANDLE};
-
     #[derive(Resource)]
     pub(crate) struct DebugLinePipeline {
         mesh_pipeline: MeshPipeline,
@@ -83,12 +83,12 @@ pub mod r3d {
                 vertex: VertexState {
                     shader: self.shader.clone_weak(),
                     entry_point: "vertex".into(),
-                    shader_defs: shader_defs.clone(),
+                    shader_defs: shader_defs.iter().map(|s|ShaderDefVal::Int(s.to_string(),0i32)).collect(),
                     buffers: vec![vertex_buffer_layout],
                 },
                 fragment: Some(FragmentState {
                     shader: self.shader.clone_weak(),
-                    shader_defs,
+                    shader_defs: shader_defs.iter().map(|s|ShaderDefVal::Int(s.to_string(),0i32)).collect(),
                     entry_point: "fragment".into(),
                     targets: vec![Some(ColorTargetState {
                         format,
@@ -150,7 +150,7 @@ pub mod r3d {
             .unwrap();
         let msaa_key = MeshPipelineKey::from_msaa_samples(msaa.samples);
         for (view, mut transparent_phase) in views.iter_mut() {
-            let view_matrix = view.transform.compute_matrix();
+            let view_matrix = view.transform.compute_matrix_mat4();
             let view_row_2 = view_matrix.row(2);
 
             let view_key = msaa_key | MeshPipelineKey::from_hdr(view.hdr);
@@ -215,7 +215,6 @@ pub mod r2d {
     };
 
     use super::super::{RenderDebugLinesMesh, DEBUG_LINES_SHADER_HANDLE};
-
     #[derive(Resource)]
     pub(crate) struct DebugLinePipeline {
         mesh_pipeline: Mesh2dPipeline,

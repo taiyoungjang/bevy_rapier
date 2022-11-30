@@ -19,7 +19,7 @@ fn main() {
 fn setup_graphics(mut commands: Commands) {
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(10.0, 3.0, 0.0)
-            .looking_at(Vec3::new(0.0, 3.0, 0.0), Vec3::Y),
+            .looking_at(DVec3::new(0.0, 3.0, 0.0), DVec3::Y),
         ..Default::default()
     });
 }
@@ -53,7 +53,7 @@ pub fn setup_physics(mut commands: Commands) {
      */
     commands.spawn((
         TransformBundle::from(
-            Transform::from_xyz(0.0, 5.0, 0.0).with_rotation(Quat::from_rotation_x(1.0)),
+            Transform::from_xyz(0.0, 5.0, 0.0).with_rotation(DQuat::from_rotation_x(1.0)),
         ),
         RigidBody::Dynamic,
         LockedAxes::ROTATION_LOCKED,

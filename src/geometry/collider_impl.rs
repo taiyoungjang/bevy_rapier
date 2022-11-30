@@ -521,8 +521,8 @@ impl Collider {
     pub fn set_scale(&mut self, mut scale: Vect, num_subdivisions: u32) {
         /// We restrict the scaling increment to 1.0e-4, to avoid numerical jitter
         /// due to the extraction of scaling factor from the GlobalTransform matrix.
-        fn snap_value(new: &mut f32) {
-            const PRECISION: f32 = 1.0e4;
+        fn snap_value(new: &mut f64) {
+            const PRECISION: f64 = 1.0e4;
             *new = (*new * PRECISION).round() / PRECISION;
         }
 

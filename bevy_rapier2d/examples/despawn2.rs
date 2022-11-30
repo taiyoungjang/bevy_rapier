@@ -67,13 +67,13 @@ pub fn setup_physics(
     let rad = 5.0;
 
     let shift = rad * 2.0;
-    let centerx = shift * (num as f32) / 2.0;
+    let centerx = shift * (num as f64) / 2.0;
     let centery = shift / 2.0;
 
     for i in 0..num {
         for j in 0usize..num * 5 {
-            let x = i as f32 * shift - centerx;
-            let y = j as f32 * shift + centery + 2.0;
+            let x = i as f64 * shift - centerx;
+            let y = j as f64 * shift + centery + 2.0;
 
             let entity = commands
                 .spawn((
